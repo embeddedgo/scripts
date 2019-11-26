@@ -18,7 +18,7 @@ set -e
 	done <"$IRQNAMES/$GOTARGET.go"
 } >zisrnames.go
 
-GOOS=noos GOARCH=thumb go build -tags $GOTARGET -ldflags "-M $GOMEM -T $GOTEXT" -o "$(basename $(pwd)).elf"
+GOOS=noos GOARCH=thumb go build -tags $GOTARGET -ldflags "-M $GOMEM -T $GOTEXT" -o "$(basename $(pwd)).elf" $@
 
 [ "$IRQNAMES" ] && rm -f zisrnames.go
 

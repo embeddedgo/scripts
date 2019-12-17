@@ -18,8 +18,19 @@ set -e
 	done <"$IRQNAMES/$GOTARGET.go"
 } >zisrnames.go
 
-GOOS=noos GOARCH=thumb go build -tags $GOTARGET -ldflags "-M $GOMEM -T $GOTEXT" -o "$(basename $(pwd)).elf" $@
+name=$(basename $(pwd))
+
+GOOS=noos GOARCH=thumb go build -tags $GOTARGET -ldflags "-M $GOMEM -T $GOTEXT" -o $name.elf $@
 
 [ "$IRQNAMES" ] && rm -f zisrnames.go
+
+case "$OUT" in
+hex)
+	arm-none-eabi-objcopy -O ihex $name.elf $name.hex
+	;;
+bin)
+	arm-none-eabi-objcopy -O binary $name.elf $name.bin
+	;;
+esac
 
 exit 0

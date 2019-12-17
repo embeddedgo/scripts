@@ -2,7 +2,6 @@
 
 set -e
 
-
 itmsplit=cat
 exit=exit
 

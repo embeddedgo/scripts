@@ -32,5 +32,3 @@ bin)
 	arm-none-eabi-objcopy -O binary $name.elf $name.bin
 	;;
 esac
-
-exit 0

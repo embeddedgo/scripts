@@ -16,10 +16,20 @@ if [ -n "$TRACECLKIN" ]; then
 	itm='itm ports on'
 fi
 
+name=$(basename $(pwd))
+img=$name.hex # prefer hex
+if [ ! -f $img ]; then
+	img=$name.elf
+fi
+if [ ! -f $img ]; then
+	echo "no binary file to load"
+	exit 1
+fi
+
 openocd -d0 -f interface/$INTERFACE.cfg -f target/$TARGET.cfg  \
 	-c 'init' \
 	-c 'reset init' \
-	-c "program $(basename $(pwd)).elf" \
+	-c "program $img" \
 	-c "$tpiu" \
 	-c "$itm" \
 	-c 'reset run' \

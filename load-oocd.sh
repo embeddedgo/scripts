@@ -22,14 +22,19 @@ if [ ! -f $img ]; then
 	img=$name.elf
 fi
 if [ ! -f $img ]; then
-	echo "no binary file to load"
+	echo "no application file to load"
 	exit 1
+fi
+settings='sleep 0'
+if [ -f settings.hex ]; then
+	settings='program settings.hex'
 fi
 
 openocd -d0 -f interface/$INTERFACE.cfg -f target/$TARGET.cfg  \
 	-c 'init' \
 	-c 'reset init' \
 	-c "program $img" \
+	-c "$settings" \
 	-c "$tpiu" \
 	-c "$itm" \
 	-c 'reset run' \

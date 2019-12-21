@@ -24,7 +24,7 @@ GOOS=noos GOARCH=thumb go build -tags $GOTARGET -ldflags "-M $GOMEM -T $GOTEXT" 
 
 [ "$IRQNAMES" ] && rm -f zisrnames.go
 
-rm -f $name.hex $name.bin
+rm -f $name.hex $name-settings.hex $name.bin
 case "$OUT" in
 hex)
 	arm-none-eabi-objcopy -O ihex $name.elf $name.hex

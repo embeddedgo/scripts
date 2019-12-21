@@ -26,8 +26,8 @@ if [ ! -f $img ]; then
 	exit 1
 fi
 settings='sleep 0'
-if [ -f settings.hex ]; then
-	settings='program settings.hex'
+if [ -f $name-settings.hex ]; then
+	settings="program $name-settings.hex"
 fi
 
 openocd -d0 -f interface/$INTERFACE.cfg -f target/$TARGET.cfg  \

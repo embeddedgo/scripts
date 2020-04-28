@@ -2,24 +2,45 @@
 
 set -e
 
-gdb_cmd=gdb
-if command -v arm-none-eabi-gdb; then
-	gdb_cmd=arm-none-eabi-gdb
-elif command -v gdb-multiarch; then
-	gdb_cmd=gdb-multiarch
+elf="$(basename $(pwd)).elf"
+
+if [ -z "$GDB" ]; then
+	case $(od -An -t x1 -j 18 -N 1 $elf) in
+	28)
+		GDB=arm-none-eabi-gdb
+		;;
+	f3)
+		GDB=riscv64-unknown-elf-gdb
+		;;
+	esac
+	if [ -z "$GDB" ]; then
+		GDB=gdb-multiarch
+	fi
 fi
 
-oocd_cmd="openocd -d0 -f interface/$INTERFACE.cfg -f target/$TARGET.cfg -c 'gdb_port pipe' -c 'log_output /dev/null'"
+if [ -z "$(command -v $GDB)" ]; then
+	echo "cannot find $GDB"
+	exit 1
+fi
 
-brkpnt=6
-wchpnt=4
+if [ -z "$OOCD" ]; then
+	OOCD=openocd
+fi
 
-$gdb_cmd --tui \
+if [ -z "$(command -v $OOCD)" ]; then
+	echo "cannot find $OOCD"
+	exit 1
+fi
+
+
+oocd_cmd="$OOCD -d0 -f interface/$INTERFACE.cfg -f target/$TARGET.cfg -c 'gdb_port pipe; log_output /dev/null'"
+
+echo $oocd_cmd
+
+$GDB --tui \
 	-ex "target extended-remote | $oocd_cmd" \
 	-ex 'set mem inaccessible-by-default off' \
-	-ex "set remote hardware-breakpoint-limit $brkpnt" \
-	-ex "set remote hardware-watchpoint-limit $wchpnt" \
 	-ex 'set history save on' \
 	-ex 'set history filename ~/.gdb-history-embeddedgo' \
 	-ex 'set history size 1000' \
-	"$(basename $(pwd)).elf"
+	$elf

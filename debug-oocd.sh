@@ -41,4 +41,5 @@ $GDB --tui \
 	-ex 'set history save on' \
 	-ex 'set history filename ~/.gdb-history-embeddedgo' \
 	-ex 'set history size 1000' \
+	-ex 'monitor halt' \
 	$elf

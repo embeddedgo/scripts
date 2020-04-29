@@ -35,8 +35,6 @@ fi
 
 oocd_cmd="$OOCD -d0 -f interface/$INTERFACE.cfg -f target/$TARGET.cfg -c 'gdb_port pipe; log_output /dev/null'"
 
-echo $oocd_cmd
-
 $GDB --tui \
 	-ex "target extended-remote | $oocd_cmd" \
 	-ex 'set mem inaccessible-by-default off' \

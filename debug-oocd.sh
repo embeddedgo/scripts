@@ -33,7 +33,7 @@ if [ -z "$(command -v $OOCD)" ]; then
 fi
 
 
-oocd_cmd="$OOCD -d0 -f interface/$INTERFACE.cfg -f target/$TARGET.cfg -c 'gdb_port pipe; log_output /dev/null'"
+oocd_cmd="$OOCD -d0 -f interface/$INTERFACE.cfg -f target/$TARGET.cfg -c 'gdb_port pipe; log_output /dev/null' $@"
 
 $GDB --tui \
 	-ex "target extended-remote | $oocd_cmd" \

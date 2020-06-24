@@ -3,7 +3,19 @@
 set -e
 
 export GOOS=noos
-export GOARCH=thumb
+
+case "$GOTARGET" in
+stm32*|nrf5*)
+	export GOARCH=thumb
+	;;
+k210)
+	export GOARCH=riscv64
+	;;
+*)
+	echo "unknown GOTARGET: '$GOTARGET'"
+	exit 1
+	;;
+esac
 
 if [ ! "$IRQNAMES" ]; then
 	case "$GOTARGET" in
@@ -13,9 +25,9 @@ if [ ! "$IRQNAMES" ]; then
 	nrf5*)
 		IRQNAMES=github.com/embeddedgo/nrf5/hal/irq
 		;;
-	*)
-		echo "cannot find IRQ names, unknown GOTARGET: $GOTARGET"
-		exit 1
+	k210)
+		IRQNAMES=github.com/embeddedgo/kendryte/hal/irq
+		;;
 	esac
 	IRQNAMES=$(go list -tags $GOTARGET -f '{{.Dir}}' $IRQNAMES)
 fi
@@ -38,7 +50,11 @@ fi
 
 name=$(basename $(pwd))
 
-go build -tags $GOTARGET -ldflags "-M $GOMEM -T $GOTEXT" -o $name.elf $@
+ldflags="-M $GOMEM"
+if [ -n "$GOTEXT" ]; then
+	ldflags="$ldflags -T $GOTEXT"
+fi
+go build -tags $GOTARGET -ldflags "$ldflags" -o $name.elf $@
 
 rm -f zisrnames.go
 

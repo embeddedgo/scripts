@@ -17,7 +17,7 @@ k210)
 	;;
 esac
 
-if [ ! "$IRQNAMES" ]; then
+if [ -z "$IRQNAMES" ]; then
 	case "$GOTARGET" in
 	stm32*)
 		IRQNAMES=github.com/embeddedgo/stm32/hal/irq
@@ -54,12 +54,17 @@ ldflags="-M $GOMEM"
 if [ -n "$GOTEXT" ]; then
 	ldflags="$ldflags -T $GOTEXT"
 fi
-go build -tags $GOTARGET -ldflags "$ldflags" -o $name.elf $@
+
+if [ -z "$GOBIN" ]; then
+	GOBIN=go
+fi
+
+$GOBIN build -tags $GOTARGET -ldflags "$ldflags" -o $name.elf $@
 
 rm -f zisrnames.go
 
 rm -f $name.hex $name-settings.hex $name.bin
-case "$OUT" in
+case "$GOOUT" in
 hex)
 	arm-none-eabi-objcopy -O ihex $name.elf $name.hex
 	;;

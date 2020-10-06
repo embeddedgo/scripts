@@ -16,7 +16,7 @@ setsid st-util >/dev/null 2>&1 </dev/null &
 
 trap /bin/true INT
 
-gdb_cmd --tui \
+$gdb_cmd --tui \
 	-ex 'target extended-remote localhost:4242' \
 	-ex 'set mem inaccessible-by-default off' \
 	-ex "set remote hardware-breakpoint-limit $brkpnt" \

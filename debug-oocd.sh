@@ -32,6 +32,9 @@ if [ -z "$(command -v $OOCD)" ]; then
 	exit 1
 fi
 
+if [ "$RESET" ]; then
+	RESET="monitor reset_config $RESET"
+fi
 
 oocd_cmd="$OOCD -d0 -f interface/$INTERFACE.cfg -f target/$TARGET.cfg -c 'gdb_port pipe; log_output /dev/null' $@"
 
@@ -41,5 +44,6 @@ $GDB --tui \
 	-ex 'set history save on' \
 	-ex 'set history filename ~/.gdb-history-embeddedgo' \
 	-ex 'set history size 1000' \
+	-ex "$RESET" \
 	-ex 'monitor halt' \
 	$elf

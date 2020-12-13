@@ -61,6 +61,10 @@ if [ -z "$GOBIN" ]; then
 	GOBIN=go
 fi
 
+if [ -n "$GOSTRIPFN" ]; then
+	ldflags="$ldflags -stripfn $GOSTRIPFN"
+fi
+
 $GOBIN build -tags $GOTARGET -ldflags "$ldflags" -o $name.elf $@
 
 rm -f zisrnames.go

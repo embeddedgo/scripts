@@ -72,9 +72,9 @@ rm -f zisrnames.go
 rm -f $name.hex $name-settings.hex $name.bin
 case "$GOOUT" in
 hex)
-	arm-none-eabi-objcopy -O ihex $name.elf $name.hex
+	objcopy -O ihex $name.elf $name.hex
 	;;
 bin)
-	arm-none-eabi-objcopy -O binary $name.elf $name.bin
+	objcopy -O binary $name.elf $name.bin
 	;;
 esac

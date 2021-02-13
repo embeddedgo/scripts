@@ -7,6 +7,9 @@ export GOOS=noos
 case "$GOTARGET" in
 stm32*|nrf5*)
 	export GOARCH=thumb
+	if [ "$GOARM" ]; then
+		export GOARM
+	fi
 	;;
 k210)
 	export GOARCH=riscv64

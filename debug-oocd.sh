@@ -2,6 +2,23 @@
 
 set -e
 
+if [ "$INTERFACE" ]; then
+	: # set explicitly
+elif lsusb -d '0d28:0204'; then
+	INTERFACE=cmsis-dap
+elif lsusb -d '0483:374b'; then
+	INTERFACE=stlink # V2-1
+elif lsusb -d '0483:3748'; then
+	INTERFACE=stlink # V2
+else
+	echo "Can not detect debug interface. Please set INTERFACE in $0"
+	exit 1
+fi
+
+if [ "$RESET" ]; then
+	RESET="monitor reset_config $RESET"
+fi
+
 elf="$(basename $(pwd)).elf"
 
 if [ -z "$GDB" ]; then
@@ -31,24 +48,6 @@ if [ -z "$(command -v $OOCD)" ]; then
 	echo "cannot find $OOCD"
 	exit 1
 fi
-
-if [ "$RESET" ]; then
-	RESET="monitor reset_config $RESET"
-fi
-
-if [ "$INTERFACE" ]; then
-	: # set explicitly
-elif lsusb -d 0d28:0204; then
-	INTERFACE=cmsis-dap
-elif lsusb -d 0483:374b; then
-	INTERFACE=stlink # V2-1
-elif lsusb -d 0483:3748; then
-	INTERFACE=stlink # V2
-else
-	echo "Can not detect debug interface. Please set INTERFACE in $0"
-	exit 1
-fi
-
 
 oocd_cmd="$OOCD -d0 -f interface/$INTERFACE.cfg -f target/$TARGET.cfg -c 'gdb_port pipe; log_output /dev/null' $@"
 

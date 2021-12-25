@@ -1,5 +1,20 @@
 #!/bin/sh
 
+set -e
+
+if [ "$INTERFACE" ]; then
+	: # set explicitly
+elif lsusb -d '0d28:0204'; then
+	INTERFACE=cmsis-dap
+elif lsusb -d '0483:374b'; then
+	INTERFACE=stlink # V2-1
+elif lsusb -d '0483:3748'; then
+	INTERFACE=stlink # V2
+else
+	echo "Can not detect debug interface. Please set INTERFACE in $0"
+	exit 1
+fi
+
 itmsplit=cat
 
 tpiu="tpiu config external uart off $TRACECLKIN 2000000"

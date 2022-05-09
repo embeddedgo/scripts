@@ -5,14 +5,18 @@ set -e
 export GOOS=noos
 
 case "$GOTARGET" in
+imxrt*)
+	export GOARCH=thumb
+	export GOARM=7d
+	;;
+k210)
+	export GOARCH=riscv64
+	;;
 stm32*|nrf5*)
 	export GOARCH=thumb
 	if [ "$GOARM" ]; then
 		export GOARM
 	fi
-	;;
-k210)
-	export GOARCH=riscv64
 	;;
 *)
 	echo "unknown GOTARGET: '$GOTARGET'"

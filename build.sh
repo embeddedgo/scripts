@@ -5,7 +5,7 @@ set -e
 export GOOS=noos
 
 case "$GOTARGET" in
-imxrt*)
+imxrt*|stm32h*)
 	export GOARCH=thumb
 	export GOARM=7d
 	;;
@@ -23,6 +23,32 @@ stm32*|nrf5*)
 	exit 1
 	;;
 esac
+
+if [ -z "$GOMEM" ]; then
+	echo "GOMEM not specified"
+	exit 1
+fi
+
+if [ -z "$GOTEXT" ]; then
+	case "$GOTARGET" in
+	imxrt*)
+		GOTEXT=0x60002000
+		;;
+	k210)
+		;;
+	stm32*)
+		GOTEXT=0x8000000
+		;;
+	nrf5*)
+		echo "GOTEXT must be set for $GOTARGET explicitly. It depends on the"
+		echo "bootloader and softdevice. Set to 0x27000 for bootloader+SD140,"
+		echo "0x1000 for bootloader only, 0 if you don't use any of them."
+		echo "CAUTION! Wrong setting may destroy the preprogrammed bootloader."
+		;;
+	*)
+		echo "cannnot infer GOTEXT for $GOTARGET"
+	esac
+fi
 
 if [ -z "$ISRNAMES" ]; then
 	case "$GOTARGET" in
@@ -65,7 +91,7 @@ if [ -n "$GOTEXT" ]; then
 fi
 
 if [ -z "$GOBIN" ]; then
-	GOBIN=go
+	GOBIN=emgo
 fi
 
 if [ -n "$GOSTRIPFN" ]; then

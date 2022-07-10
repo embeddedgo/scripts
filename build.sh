@@ -4,6 +4,10 @@ set -e
 
 export GOOS=noos
 
+if [ -z "$GOBIN" ]; then
+	GOBIN=emgo
+fi
+
 case "$GOTARGET" in
 imxrt*|stm32h*)
 	export GOARCH=thumb
@@ -50,6 +54,10 @@ if [ -z "$GOTEXT" ]; then
 	esac
 fi
 
+if [ -z "$ISRNAMES" ] && grep -q '//go:interrupthandler' *.go; then
+	ISRNAMES=no
+fi
+
 if [ -z "$ISRNAMES" ]; then
 	case "$GOTARGET" in
 	stm32*)
@@ -62,7 +70,7 @@ if [ -z "$ISRNAMES" ]; then
 		ISRNAMES=github.com/embeddedgo/kendryte/hal/irq
 		;;
 	esac
-	ISRNAMES=$(go list -tags $GOTARGET -f '{{.Dir}}' $ISRNAMES)
+	ISRNAMES=$($GOBIN list -tags $GOTARGET -f '{{.Dir}}' $ISRNAMES)
 fi
 
 if [ "$ISRNAMES" != 'no' ]; then
@@ -88,10 +96,6 @@ name=$(basename $(pwd))
 ldflags="-M $GOMEM"
 if [ -n "$GOTEXT" ]; then
 	ldflags="$ldflags -T $GOTEXT"
-fi
-
-if [ -z "$GOBIN" ]; then
-	GOBIN=emgo
 fi
 
 if [ -n "$GOSTRIPFN" ]; then

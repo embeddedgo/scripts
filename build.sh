@@ -54,7 +54,7 @@ if [ -z "$GOTEXT" ]; then
 	esac
 fi
 
-if [ -z "$ISRNAMES" ] && grep -q '//go:interrupthandler' *.go; then
+if [ -z "$ISRNAMES" ] && ! grep -q '//go:interrupthandler' *.go; then
 	ISRNAMES=no
 fi
 

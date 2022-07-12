@@ -5,10 +5,12 @@ for d in ../*/devboard/*/examples/*; do
 		echo $d
 		cd $d
 		if [ -f main.go ]; then
-			if [ -x ../build.sh ]; then
-				../build.sh
-			elif [ -x ../build-blank.sh ]; then
+			if [ -x ../build-blank.sh ]; then
 				../build-blank.sh
+			elif [ -x ../build.sh ]; then
+				../build.sh
+			elif [ -f ../build.cfg ]; then
+				emgo build
 			fi
 		fi
 		cd - >/dev/null

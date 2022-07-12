@@ -3,23 +3,17 @@
 cd $(dirname $0)
 
 dir=$(pwd)
-gobin=$dir/go/bin
 path="
-# added by $dir/setup.sh
-export PATH=\$PATH:$gobin
+# added by $dir/scripts/setup.sh
+export PATH=\$PATH:$dir
 "
 
-if [ ! -d $gobin ]; then
-	echo "There is no $gobin directory."
-	exit 1
-fi
-
-echo "Adding $gobin to the PATH in profile files:"
+echo "Adding $dir to the PATH in the folowing profile files:"
 echo
 
 for p in .profile .bash_profile; do
 	if [ -f $HOME/$p ]; then
-		if grep -q "$gobin" $HOME/$p 2>/dev/null; then
+		if grep -q "PATH=.*$dir" $HOME/$p 2>/dev/null; then
 			echo "  $HOME/$p - skipped (already added)"
 		else
 			echo "  $HOME/$p"

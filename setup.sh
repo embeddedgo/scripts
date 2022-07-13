@@ -2,7 +2,7 @@
 
 cd $(dirname $0)
 
-dir=$(pwd)
+dir=$(dirname $(pwd))
 path="
 # added by $dir/scripts/setup.sh
 export PATH=\$PATH:$dir

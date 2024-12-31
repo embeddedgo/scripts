@@ -58,6 +58,9 @@ else
 	RESET="echo -n ''"
 fi
 
+# This load script uses 'reset init' instead of 'reset halt' like the debug
+# script because it must setup the targed for flashing.
+
 $OOCD -d0 -f interface/$INTERFACE.cfg -f target/$TARGET.cfg  \
 	-c "$RESET" \
 	-c 'init' \

@@ -15,22 +15,27 @@ else
 	exit 1
 fi
 
+HALT='monitor halt'
 if [ "$RESET" ]; then
 	RESET="monitor reset_config $RESET"
+	HALT='monitor reset halt'
 fi
 
 elf="$(basename $(pwd)).elf"
 
 if [ -z "$GDB" ]; then
-	case $(od -An -t x1 -j 18 -N 1 $elf) in
+	aa=$(echo $(od -An -t x1 -j 18 -N 1 $elf))
+	case "$aa" in
 	28)
 		GDB=arm-none-eabi-gdb
 		;;
 	f3)
 		GDB=riscv64-unknown-elf-gdb
 		;;
+	*)
+		GDB=gdb-multiarch
 	esac
-	if [ -z "$GDB" ]; then
+	if [ -z "$(command -v $GDB)" ]; then
 		GDB=gdb-multiarch
 	fi
 fi
@@ -49,7 +54,7 @@ if [ -z "$(command -v $OOCD)" ]; then
 	exit 1
 fi
 
-oocd_cmd="$OOCD -d0 -f interface/$INTERFACE.cfg -f target/$TARGET.cfg -c 'gdb_port pipe; log_output /dev/null' $@"
+oocd_cmd="$OOCD -d0 -f interface/$INTERFACE.cfg -f target/$TARGET.cfg -c 'gdb port pipe; log_output /dev/null' $@"
 
 $GDB --tui \
 	-ex "target extended-remote | $oocd_cmd" \
@@ -58,5 +63,5 @@ $GDB --tui \
 	-ex 'set history filename ~/.gdb-history-embeddedgo' \
 	-ex 'set history size 1000' \
 	-ex "$RESET" \
-	-ex 'monitor halt' \
+	-ex "$HALT" \
 	$elf

@@ -55,13 +55,20 @@ fi
 if [ "$RESET" ]; then
 	RESET="reset_config $RESET"
 else
-	RESET="echo -n ''"
+	RESET='echo -n ""'
+fi
+
+if [ "$SPEED" ]; then
+	SPEED="adapter speed $SPEED"
+else
+	SPEED='echo -n ""'
 fi
 
 # This load script uses 'reset init' instead of 'reset halt' like the debug
 # script because it must setup the targed for flashing.
 
-$OOCD -d0 -f interface/$INTERFACE.cfg -f target/$TARGET.cfg  \
+$OOCD -d0 -f interface/$INTERFACE.cfg -f target/$TARGET.cfg \
+	-c "$SPEED" \
 	-c "$RESET" \
 	-c 'init' \
 	-c 'reset init' \

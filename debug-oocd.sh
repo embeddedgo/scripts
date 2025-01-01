@@ -54,7 +54,13 @@ if [ -z "$(command -v $OOCD)" ]; then
 	exit 1
 fi
 
-oocd_cmd="$OOCD -d0 -f interface/$INTERFACE.cfg -f target/$TARGET.cfg -c 'gdb port pipe; log_output /dev/null' $@"
+if [ "$SPEED" ]; then
+	SPEED="adapter speed $SPEED"
+else
+	SPEED='echo -n ""'
+fi
+
+oocd_cmd="$OOCD -d0 -f interface/$INTERFACE.cfg -f target/$TARGET.cfg -c '$SPEED' -c 'gdb_port pipe; log_output oocd.log' $@"
 
 $GDB --tui \
 	-ex "target extended-remote | $oocd_cmd" \
@@ -65,3 +71,4 @@ $GDB --tui \
 	-ex "$RESET" \
 	-ex "$HALT" \
 	$elf
+

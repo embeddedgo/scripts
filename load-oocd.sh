@@ -68,6 +68,8 @@ fi
 # script because it must setup the targed for flashing.
 
 $OOCD -d0 -f interface/$INTERFACE.cfg -f target/$TARGET.cfg \
+	-c 'tcl_port disabled' \
+	-c 'telnet_port disabled' \
 	-c "$SPEED" \
 	-c "$RESET" \
 	-c 'init' \

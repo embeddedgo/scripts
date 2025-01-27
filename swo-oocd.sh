@@ -34,6 +34,8 @@ if [ -z "$(command -v $OOCD)" ]; then
 fi
 
 $OOCD -f interface/$INTERFACE.cfg -f target/$TARGET.cfg \
+	-c 'tcl_port disabled' \
+	-c 'telnet_port disabled' \
 	-c 'init' \
 	-c "$tpiu" \
 	-c 'itm ports on' \

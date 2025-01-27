@@ -60,7 +60,7 @@ else
 	SPEED='echo -n ""'
 fi
 
-oocd_cmd="$OOCD -d0 -f interface/$INTERFACE.cfg -f target/$TARGET.cfg -c '$SPEED' -c 'gdb_port pipe; log_output oocd.log' $@"
+oocd_cmd="$OOCD -d0 -f interface/$INTERFACE.cfg -f target/$TARGET.cfg -c '$SPEED' -c 'tcl_port disabled' -c 'telnet_port disabled' -c 'gdb_port pipe; log_output oocd.log' $@"
 
 $GDB --tui \
 	-ex "target extended-remote | $oocd_cmd" \

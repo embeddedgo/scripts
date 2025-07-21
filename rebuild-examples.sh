@@ -1,6 +1,6 @@
 #!/bin/sh
 
-for d in ../*/devboard/*/examples/* ../*/devboard/*/module/*/examples/*; do
+for d in devboard/*/examples/*; do
 	if [ -d $d ]; then
 		echo $d
 		cd $d
@@ -10,7 +10,7 @@ for d in ../*/devboard/*/examples/* ../*/devboard/*/module/*/examples/*; do
 			elif [ -x ../build.sh ]; then
 				../build.sh
 			else
-				emgo build
+				egtool build
 			fi
 		fi
 		cd - >/dev/null
